@@ -1,18 +1,35 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [role, setRole] = useState('student'); // Default role is 'student'
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    role: 'student', // Default role
+  });
 
-  const toggleRole = () => {
-    setRole(role === 'student' ? 'teacher' : 'student');
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSignup = () => {
-    // Signup logic here (e.g., API call)
-    alert(`Account created successfully as ${role.toUpperCase()}! Please login.`);
-    navigate(`/login?role=${role}`);
+  const handleSignup = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/auth/signup', formData);
+      toast.success('Signup successful! Please login.');
+      navigate('/login');
+    } catch (error) {
+      toast.error('Signup failed. Please try again.');
+      console.error(error.response.data);
+    }
+  };
+
+  const toggleRole = () => {
+    setFormData({ ...formData, role: formData.role === 'student' ? 'teacher' : 'student' });
   };
 
   return (
@@ -21,7 +38,9 @@ const Signup = () => {
         {/* Role Header */}
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 text-center">
           Sign Up as{' '}
-          <span className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 bg-clip-text text-transparent transition-colors duration-300">{role.toUpperCase()}</span>
+          <span className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 bg-clip-text text-transparent transition-colors duration-300">
+            {formData.role.toUpperCase()}
+          </span>
         </h1>
 
         {/* Decorative Illustration */}
@@ -38,18 +57,24 @@ const Signup = () => {
         <div className="space-y-4 sm:space-y-6">
           <input
             type="text"
+            name="username"
             placeholder="Username"
             className="w-full bg-transparent border-b border-gray-300 text-gray-700 p-2 focus:outline-none focus:border-indigo-500 placeholder-gray-500"
+            onChange={handleChange}
           />
           <input
             type="email"
+            name="email"
             placeholder="Email"
             className="w-full bg-transparent border-b border-gray-300 text-gray-700 p-2 focus:outline-none focus:border-indigo-500 placeholder-gray-500"
+            onChange={handleChange}
           />
           <input
             type="password"
+            name="password"
             placeholder="Password"
             className="w-full bg-transparent border-b border-gray-300 text-gray-700 p-2 focus:outline-none focus:border-indigo-500 placeholder-gray-500"
+            onChange={handleChange}
           />
         </div>
 
@@ -58,12 +83,12 @@ const Signup = () => {
           onClick={handleSignup}
           className="mt-6 w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white py-3 rounded-full shadow-md transition-transform duration-300"
         >
-          Sign Up as {role.toUpperCase()}
+          Sign Up as {formData.role.toUpperCase()}
         </button>
 
         {/* Role Toggle */}
         <p className="text-center text-gray-700 mt-4">
-          {role === 'student' ? (
+          {formData.role === 'student' ? (
             <>
               Are you a{' '}
               <button
@@ -87,7 +112,7 @@ const Signup = () => {
         </p>
 
         {/* Login Link */}
-        <p className="mt-4  text-center text-gray-700">
+        <p className="mt-4 text-center text-gray-700">
           Already have an account?{' '}
           <button
             onClick={() => navigate('/login')}
@@ -97,6 +122,9 @@ const Signup = () => {
           </button>
         </p>
       </div>
+
+      {/* Toast Notification Container */}
+      <ToastContainer />
     </div>
   );
 };
