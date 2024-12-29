@@ -5,6 +5,10 @@ const Signup = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState('student'); // Default role is 'student'
 
+  const toggleRole = () => {
+    setRole(role === 'student' ? 'teacher' : 'student');
+  };
+
   const handleSignup = () => {
     // Signup logic here (e.g., API call)
     alert(`Account created successfully as ${role.toUpperCase()}! Please login.`);
@@ -12,61 +16,87 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <h1 className="text-3xl font-bold mb-6">Sign Up</h1>
+    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-100 via-white to-green-100">
+      <div className="bg-white border border-gray-200 shadow-lg rounded-lg p-6 sm:p-8 w-full max-w-md mb-2">
+        {/* Role Header */}
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 text-center">
+          Sign Up as{' '}
+          <span className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 bg-clip-text text-transparent transition-colors duration-300">{role.toUpperCase()}</span>
+        </h1>
 
-      {/* Role Selection */}
-      <div className="flex mb-4 space-x-4">
+        {/* Decorative Illustration */}
+        <div className="mb-4 flex justify-center">
+          <img
+            src="https://img.freepik.com/free-vector/secure-login-concept-illustration_114360-4685.jpg?ga=GA1.1.90701070.1717571865&semt=ais_hybrid"
+            alt="Signup Illustration"
+            className="w-full max-w-[12rem] sm:max-w-[16rem] rounded-lg shadow-md"
+            loading="lazy"
+          />
+        </div>
+
+        {/* Input Fields */}
+        <div className="space-y-4 sm:space-y-6">
+          <input
+            type="text"
+            placeholder="Username"
+            className="w-full bg-transparent border-b border-gray-300 text-gray-700 p-2 focus:outline-none focus:border-indigo-500 placeholder-gray-500"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full bg-transparent border-b border-gray-300 text-gray-700 p-2 focus:outline-none focus:border-indigo-500 placeholder-gray-500"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full bg-transparent border-b border-gray-300 text-gray-700 p-2 focus:outline-none focus:border-indigo-500 placeholder-gray-500"
+          />
+        </div>
+
+        {/* Signup Button */}
         <button
-          onClick={() => setRole('student')}
-          className={`px-4 py-2 rounded-md ${
-            role === 'student' ? 'bg-blue-500 text-white' : 'bg-gray-200'
-          }`}
+          onClick={handleSignup}
+          className="mt-6 w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white py-3 rounded-full shadow-md transition-transform duration-300"
         >
-          Student
+          Sign Up as {role.toUpperCase()}
         </button>
-        <button
-          onClick={() => setRole('teacher')}
-          className={`px-4 py-2 rounded-md ${
-            role === 'teacher' ? 'bg-green-500 text-white' : 'bg-gray-200'
-          }`}
-        >
-          Teacher
-        </button>
+
+        {/* Role Toggle */}
+        <p className="text-center text-gray-700 mt-4">
+          {role === 'student' ? (
+            <>
+              Are you a{' '}
+              <button
+                onClick={toggleRole}
+                className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 bg-clip-text text-transparent transition-colors duration-300 font-medium hover:underline"
+              >
+                Teacher?
+              </button>
+            </>
+          ) : (
+            <>
+              Are you a{' '}
+              <button
+                onClick={toggleRole}
+                className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 bg-clip-text text-transparent transition-colors duration-300 font-medium hover:underline"
+              >
+                Student?
+              </button>
+            </>
+          )}
+        </p>
+
+        {/* Login Link */}
+        <p className="mt-4  text-center text-gray-700">
+          Already have an account?{' '}
+          <button
+            onClick={() => navigate('/login')}
+            className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 bg-clip-text text-transparent transition-colors duration-300 font-medium hover:underline"
+          >
+            Login
+          </button>
+        </p>
       </div>
-
-      {/* Signup Form */}
-      <input
-        type="text"
-        placeholder="Username"
-        className="mb-4 p-2 border border-gray-300 rounded-md"
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        className="mb-4 p-2 border border-gray-300 rounded-md"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        className="mb-4 p-2 border border-gray-300 rounded-md"
-      />
-      <button
-        onClick={handleSignup}
-        className="bg-green-500 text-white px-4 py-2 rounded-md mb-4"
-      >
-        Sign Up as {role.toUpperCase()}
-      </button>
-
-      <p>
-        Already have an account?{' '}
-        <button
-          onClick={() => navigate('/login')}
-          className="underline text-blue-500"
-        >
-          Login
-        </button>
-      </p>
     </div>
   );
 };
