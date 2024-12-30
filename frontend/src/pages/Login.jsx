@@ -16,6 +16,82 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // const handleLogin = async () => {
+  //   if (!formData.email || !formData.password) {
+  //     toast.error('Please fill in all fields.', {
+  //       autoClose: 3000,
+  //       progress: undefined, // Hide progress bar
+  //     });
+  //     return;
+  //   }
+
+  //   try {
+  //     const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+  //     localStorage.setItem('token', res.data.token);
+  //     localStorage.setItem('user', JSON.stringify(res.data.user));
+  //     if (res.data.user.role === 'student') {
+  //       navigate('/student/home');
+  //     } else {
+  //       navigate('/teacher/dashboard');
+  //     }
+      
+  //     // Toast success without progress bar
+  //     toast.success('Login successful!', {
+  //       autoClose: 3000, // Optional: duration in ms
+  //       progress: undefined, // This hides the progress bar
+  //     });
+  //   } catch (error) {
+  //     toast.error('Don\'t have an account to log in. Please sign up.', {
+  //       autoClose: 3000, // Optional: duration in ms
+  //       progress: undefined, // This hides the progress bar
+  //     });
+  //     console.error(error.response.data);
+  //   }
+  // };
+
+
+  // const handleLogin = async () => {
+  //   if (!formData.email || !formData.password) {
+  //     toast.error('Please fill in all fields.', {
+  //       autoClose: 3000,
+  //       progress: undefined, // Hide progress bar
+  //     });
+  //     return;
+  //   }
+  
+  //   try {
+  //     const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+  //     localStorage.setItem('token', res.data.token);
+  //     localStorage.setItem('user', JSON.stringify(res.data.user));
+  
+  //     if (res.data.user.role === 'student') {
+  //       navigate('/student/home');
+  //     } else {
+  //       navigate('/teacher/dashboard');
+  //     }
+  
+  //     toast.success('Login successful!', {
+  //       autoClose: 3000, // Optional: duration in ms
+  //       progress: undefined, // This hides the progress bar
+  //     });
+  //   } catch (error) {
+  //     if (error.response && error.response.data.message) {
+  //       // Use backend-provided error message
+  //       toast.error(error.response.data.message, {
+  //         autoClose: 3000,
+  //         progress: undefined,
+  //       });
+  //     } else {
+  //       // Handle network or unexpected errors
+  //       toast.error('An unexpected error occurred. Please try again.', {
+  //         autoClose: 3000,
+  //         progress: undefined,
+  //       });
+  //     }
+  //     console.error('Login error:', error);
+  //   }
+  // };
+
   const handleLogin = async () => {
     if (!formData.email || !formData.password) {
       toast.error('Please fill in all fields.', {
@@ -24,31 +100,63 @@ const Login = () => {
       });
       return;
     }
-
+  
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+  
+      // Save user details in localStorage
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
+  
+      // Navigate based on user role
       if (res.data.user.role === 'student') {
         navigate('/student/home');
       } else {
         navigate('/teacher/dashboard');
       }
-      
-      // Toast success without progress bar
+  
       toast.success('Login successful!', {
         autoClose: 3000, // Optional: duration in ms
         progress: undefined, // This hides the progress bar
       });
     } catch (error) {
-      toast.error('Don\'t have an account to log in. Please sign up.', {
-        autoClose: 3000, // Optional: duration in ms
-        progress: undefined, // This hides the progress bar
-      });
-      console.error(error.response.data);
+      if (error.response) {
+        // Handle specific backend errors
+        if (error.response.status === 400 && error.response.data.message === 'User not found') {
+          toast.error('No account found with this email. Please sign up.', {
+            autoClose: 3000,
+            progress: undefined,
+          });
+        } else if (error.response.status === 400 && error.response.data.message === 'Invalid password') {
+          toast.error('Incorrect password. Please try again.', {
+            autoClose: 3000,
+            progress: undefined,
+          });
+        } else {
+          toast.error(error.response.data.message || 'Failed to log in. Please try again.', {
+            autoClose: 3000,
+            progress: undefined,
+          });
+        }
+      } else if (error.request) {
+        // Handle network errors
+        toast.error('Network error. Please check your connection and try again.', {
+          autoClose: 3000,
+          progress: undefined,
+        });
+      } else {
+        // Handle unexpected errors
+        toast.error('An unexpected error occurred. Please try again.', {
+          autoClose: 3000,
+          progress: undefined,
+        });
+      }
+      console.error('Login error:', error);
     }
   };
+  
 
+  
   const toggleRole = () => {
     setRole(role === 'student' ? 'teacher' : 'student');
   };
